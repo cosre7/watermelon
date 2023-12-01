@@ -31,7 +31,7 @@ const ground = Bodies.rectangle(310, 700, 620, 60, {
     render: {fillStyle: "#E6B143"}
 });
 
-const topLine = Bodies.rectangle(310, 600, 620, 2, {
+const topLine = Bodies.rectangle(310, 150, 620, 2, {
     name: "topLine",
     isStatic: true,
     isSensor: true, // 걸리지 않고 떨어지도록 
@@ -46,6 +46,7 @@ Runner.run(engine);
 let currentBody = null;
 let currentFruit = null;
 let disableAction = false;
+let result = 0;
 
 function addFruit() {
     const index = Math.floor(Math.random() * 5);
@@ -95,6 +96,7 @@ Events.on(engine, "collisionStart", (event) => { // 충돌이 시작될 때 이�
             const index = collision.bodyA.index;
 
             if (index === FRUITS_BASE.length - 1) { // 가장 마지막 과일일 때
+                result++;
                 return;
             }
 
