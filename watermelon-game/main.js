@@ -1,4 +1,4 @@
-import { Bodies, Engine, Render, Runner, World } from "matter-js";
+import { Bodies, Body, Engine, Render, Runner, World } from "matter-js";
 import {FRUITS_BASE} from "./fruits";
 
 
@@ -44,6 +44,7 @@ Runner.run(engine);
 
 let currentBody = null;
 let currentFruit = null;
+let disableAction = false;
 
 function addFruit() {
     const index = Math.floor(Math.random() * 5);
@@ -62,6 +63,36 @@ function addFruit() {
     currentFruit = fruit;
 
     World.add(world, body);
+}
+
+window.onkeydown = (event) => {
+    if (disableAction) { // 과일이 떨어지는 동안 버튼을 조작할 수 없도록 
+        return;
+    }
+
+    switch(event.code) {
+        case "KeyA":
+            Body.setPosition(currentBody, {
+                x: currentBody.position.x - 10,
+                y: currentBody.position.y,
+            })
+            break;
+        case "KeyD":
+            Body.setPosition(currentBody, {
+                x: currentBody.position.x + 10,
+                y: currentBody.position.y,
+            })
+            break;
+        case "KeyS":
+            currentBody.isSleeping = false;
+            disableAction = true;
+
+            setTimeout(() => {
+                addFruit();
+                disableAction = false;
+            }, 1500);
+            break;
+    }
 }
 
 addFruit();
