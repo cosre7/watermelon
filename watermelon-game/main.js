@@ -10,7 +10,7 @@ const render = Render.create({
         wireframes: false,
         background: "#F7F4C8",
         width: 620,
-        height: 850,
+        height: 700,
     }
 });
 
@@ -26,7 +26,7 @@ const rightWall = Bodies.rectangle(605, 395, 30, 790, {
     render: {fillStyle: "#E6B143"}
 });
 
-const ground = Bodies.rectangle(310, 820, 620, 60, {
+const ground = Bodies.rectangle(310, 700, 620, 60, {
     isStatic : true, // 왼쪽벽 고정 
     render: {fillStyle: "#E6B143"}
 });
@@ -73,8 +73,8 @@ window.onkeydown = (event) => {
     }
 
     switch(event.code) {
-        case "KeyA":
-            if (interval)
+        case "KeyA": // a 키 클릭 시 왼쪽으로 이동 
+            if (interval) // 
                 return;
 
             interval = setInterval(() => {
@@ -85,7 +85,7 @@ window.onkeydown = (event) => {
                     });
             }, 5);
             break;
-        case "KeyD":
+        case "KeyD": // d 키 클릭 시 오른쪽으로 이동 
             if (interval)
                 return;
 
@@ -98,7 +98,7 @@ window.onkeydown = (event) => {
             }, 5);
 
             break;
-        case "KeyS":
+        case "KeyS": // s 키 클릭 시 
             currentBody.isSleeping = false;
             disableAction = true;
 
@@ -117,6 +117,22 @@ window.onkeyup = (event) => {
             clearInterval(interval);
             interval = null;
     }
+}
+
+window.onclick = (event) => {
+    console.log(event.clientX);
+    Body.setPosition(currentBody, {
+        x: event.clientX,
+        y: currentBody.position.y,
+    });
+
+    currentBody.isSleeping = false;
+    disableAction = true;
+
+    setTimeout(() => {
+        addFruit();
+        disableAction = false;
+    }, 1000);
 }
 
 Events.on(engine, "collisionStart", (event) => { // 충돌이 시작될 때 이벤트 추가 
