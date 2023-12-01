@@ -46,6 +46,7 @@ Runner.run(engine);
 let currentBody = null;
 let currentFruit = null;
 let disableAction = false;
+let interval = null;
 
 function addFruit() {
     const index = Math.floor(Math.random() * 5);
@@ -73,18 +74,29 @@ window.onkeydown = (event) => {
 
     switch(event.code) {
         case "KeyA":
-            if (currentBody.position.x - currentFruit.radius > 30)
-                Body.setPosition(currentBody, {
-                    x: currentBody.position.x - 10,
-                    y: currentBody.position.y,
-                })
+            if (interval)
+                return;
+
+            interval = setInterval(() => {
+                if (currentBody.position.x - currentFruit.radius > 30)
+                    Body.setPosition(currentBody, {
+                        x: currentBody.position.x - 1,
+                        y: currentBody.position.y,
+                    });
+            }, 5);
             break;
         case "KeyD":
+            if (interval)
+                return;
+
+            interval = setInterval(() => {
             if (currentBody.position.x + currentFruit.radius < 590)
                 Body.setPosition(currentBody, {
-                    x: currentBody.position.x + 10,
+                    x: currentBody.position.x + 1,
                     y: currentBody.position.y,
-                })
+                });
+            }, 5);
+
             break;
         case "KeyS":
             currentBody.isSleeping = false;
@@ -93,8 +105,17 @@ window.onkeydown = (event) => {
             setTimeout(() => {
                 addFruit();
                 disableAction = false;
-            }, 1500);
+            }, 1000);
             break;
+    }
+}
+
+window.onkeyup = (event) => {
+    switch (event.code) {
+        case "KeyA":
+        case "KeyD":
+            clearInterval(interval);
+            interval = null;
     }
 }
 
@@ -124,8 +145,7 @@ Events.on(engine, "collisionStart", (event) => { // 충돌이 시작될 때 이�
             World.add(world, newBody);
         }
 
-        if (
-            !disableAction &&
+        if (!disableAction &&
             (collision.bodyA.name === 'topLine' || collision.bodyB.name === 'topLine')) {
             alert('Game over');
         }
