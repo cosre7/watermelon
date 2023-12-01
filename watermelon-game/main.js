@@ -32,6 +32,7 @@ const ground = Bodies.rectangle(310, 820, 620, 60, {
 });
 
 const topLine = Bodies.rectangle(310, 150, 620, 2, {
+    name: "topLine",
     isStatic: true,
     isSensor: true, // 걸리지 않고 떨어지도록 
     render: {fillStyle: "E6B143"}
@@ -121,6 +122,12 @@ Events.on(engine, "collisionStart", (event) => { // 충돌이 시작될 때 이�
             );
 
             World.add(world, newBody);
+        }
+
+        if (
+            !disableAction &&
+            (collision.bodyA.name === 'topLine' || collision.bodyB.name === 'topLine')) {
+            alert('Game over');
         }
     });
 });
