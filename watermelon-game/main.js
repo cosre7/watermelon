@@ -31,7 +31,7 @@ const ground = Bodies.rectangle(310, 700, 620, 60, {
     render: {fillStyle: "#E6B143"}
 });
 
-const topLine = Bodies.rectangle(310, 150, 620, 2, {
+const topLine = Bodies.rectangle(310, 600, 620, 2, {
     name: "topLine",
     isStatic: true,
     isSensor: true, // 걸리지 않고 떨어지도록 
@@ -46,7 +46,6 @@ Runner.run(engine);
 let currentBody = null;
 let currentFruit = null;
 let disableAction = false;
-let interval = null;
 
 function addFruit() {
     const index = Math.floor(Math.random() * 5);
@@ -67,64 +66,19 @@ function addFruit() {
     World.add(world, body);
 }
 
-window.onkeydown = (event) => {
+window.onclick = (event) => {
     if (disableAction) { // 과일이 떨어지는 동안 버튼을 조작할 수 없도록 
         return;
     }
-
-    switch(event.code) {
-        case "KeyA": // a 키 클릭 시 왼쪽으로 이동 
-            if (interval) // 
-                return;
-
-            interval = setInterval(() => {
-                if (currentBody.position.x - currentFruit.radius > 30)
-                    Body.setPosition(currentBody, {
-                        x: currentBody.position.x - 1,
-                        y: currentBody.position.y,
-                    });
-            }, 5);
-            break;
-        case "KeyD": // d 키 클릭 시 오른쪽으로 이동 
-            if (interval)
-                return;
-
-            interval = setInterval(() => {
-            if (currentBody.position.x + currentFruit.radius < 590)
-                Body.setPosition(currentBody, {
-                    x: currentBody.position.x + 1,
-                    y: currentBody.position.y,
-                });
-            }, 5);
-
-            break;
-        case "KeyS": // s 키 클릭 시 
-            currentBody.isSleeping = false;
-            disableAction = true;
-
-            setTimeout(() => {
-                addFruit();
-                disableAction = false;
-            }, 1000);
-            break;
+    
+    if (30 < event.clientX && event.clientX < 590) {
+        Body.setPosition(currentBody, {
+            x: event.clientX,
+            y: currentBody.position.y,
+        });
+    } else {
+        return;
     }
-}
-
-window.onkeyup = (event) => {
-    switch (event.code) {
-        case "KeyA":
-        case "KeyD":
-            clearInterval(interval);
-            interval = null;
-    }
-}
-
-window.onclick = (event) => {
-    console.log(event.clientX);
-    Body.setPosition(currentBody, {
-        x: event.clientX,
-        y: currentBody.position.y,
-    });
 
     currentBody.isSleeping = false;
     disableAction = true;
@@ -164,6 +118,7 @@ Events.on(engine, "collisionStart", (event) => { // 충돌이 시작될 때 이�
         if (!disableAction &&
             (collision.bodyA.name === 'topLine' || collision.bodyB.name === 'topLine')) {
             alert('Game over');
+            disableAction = true;
         }
     });
 });
