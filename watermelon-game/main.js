@@ -1,4 +1,4 @@
-import { Bodies, Body, Engine, Render, Runner, World } from "matter-js";
+import { Bodies, Body, Engine, Events, Render, Runner, World } from "matter-js";
 import {FRUITS_BASE} from "./fruits";
 
 
@@ -72,16 +72,18 @@ window.onkeydown = (event) => {
 
     switch(event.code) {
         case "KeyA":
-            Body.setPosition(currentBody, {
-                x: currentBody.position.x - 10,
-                y: currentBody.position.y,
-            })
+            if (currentBody.position.x - currentFruit.radius > 30)
+                Body.setPosition(currentBody, {
+                    x: currentBody.position.x - 10,
+                    y: currentBody.position.y,
+                })
             break;
         case "KeyD":
-            Body.setPosition(currentBody, {
-                x: currentBody.position.x + 10,
-                y: currentBody.position.y,
-            })
+            if (currentBody.position.x + currentFruit.radius < 590)
+                Body.setPosition(currentBody, {
+                    x: currentBody.position.x + 10,
+                    y: currentBody.position.y,
+                })
             break;
         case "KeyS":
             currentBody.isSleeping = false;
@@ -94,5 +96,33 @@ window.onkeydown = (event) => {
             break;
     }
 }
+
+Events.on(engine, "collisionStart", (event) => { // 충돌이 시작될 때 이벤트 추가 
+    event.pairs.forEach((collision) => {
+        if (collision.bodyA.index === collision.bodyB.index) { // 같은 과일끼리 부딪히면 
+            const index = collision.bodyA.index;
+
+            if (index === FRUITS_BASE.length - 1) { // 가장 마지막 과일일 때
+                return;
+            }
+
+            World.remove(world, [collision.bodyA, collision.bodyB]); // 기존 두 과일 없애기
+
+            const newFruit = FRUITS_BASE[index + 1];
+
+            const newBody = Bodies.circle(
+                collision.collision.supports[0].x,
+                collision.collision.supports[0].y,
+                newFruit.radius,
+                {
+                    render: { sprite: {texture: `${newFruit.name}.png`}},
+                    index: index + 1,
+                }
+            );
+
+            World.add(world, newBody);
+        }
+    });
+});
 
 addFruit();
