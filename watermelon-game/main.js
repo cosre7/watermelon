@@ -10,7 +10,7 @@ const render = Render.create({
         wireframes: false,
         background: "#F7F4C8",
         width: 620,
-        height: 700,
+        height: 850,
     }
 });
 
@@ -26,7 +26,7 @@ const rightWall = Bodies.rectangle(605, 395, 30, 790, {
     render: {fillStyle: "#E6B143"}
 });
 
-const ground = Bodies.rectangle(310, 700, 620, 60, {
+const ground = Bodies.rectangle(310, 820, 620, 60, {
     isStatic : true, // 왼쪽벽 고정 
     render: {fillStyle: "#E6B143"}
 });
@@ -58,7 +58,7 @@ function addFruit() {
         render: {
             sprite: {texture: `${fruit.name}.png`}
         },
-        restitution: 0.3, // 통통튀기기
+        restitution: 0.6, // 통통튀기기
     });
 
     currentBody = body;
@@ -67,7 +67,7 @@ function addFruit() {
     World.add(world, body);
 }
 
-window.onclick = (event) => {
+document.querySelector('body').onclick = (event) => {
     if (disableAction) { // 과일이 떨어지는 동안 버튼을 조작할 수 없도록 
         return;
     }
